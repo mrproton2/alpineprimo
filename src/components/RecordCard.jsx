@@ -31,9 +31,10 @@ export default function RecordCard({
         `/document/delete/${doc.id}`
       );
 
-      alert("Record Deleted Successfully");
+      alert(
+        "Record Deleted Successfully"
+      );
 
-      // refresh data
       fetchDocuments();
 
     } catch (error) {
@@ -45,15 +46,18 @@ export default function RecordCard({
   };
 
   return (
+
     <Card className="record-card">
 
       {
         doc.imageName && (
+
           <img
             src={`http://54.237.162.64:8080/images/${doc.imageName}`}
             alt="document"
             className="record-image"
           />
+
         )
       }
 
