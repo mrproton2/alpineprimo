@@ -5,16 +5,16 @@ import {
   TextField,
   Button,
   Typography,
+  Alert,
 } from "@mui/material";
 
 import API from "../services/api";
 
 export default function Login() {
 
-  const [isLogin, setIsLogin] = useState(true);
+  const [error, setError] = useState("");
 
   const [form, setForm] = useState({
-    name: "",
     email: "",
     password: "",
   });
@@ -27,24 +27,41 @@ export default function Login() {
     });
   };
 
-  const handleRegister = async () => {
-
-    await API.post("/auth/register", form);
-
-    alert("Registered");
-  };
-
   const handleLogin = async () => {
 
-    const response = await API.post("/auth/login", {
-      email: form.email,
-      password: form.password,
-    });
+    try {
 
-    localStorage.setItem("token", response.data.token);
-    localStorage.setItem("name", response.data.name);
+      const response = await API.post(
+        "/auth/login",
+        {
+          email: form.email,
+          password: form.password,
+        }
+      );
 
-    window.location.href = "/dashboard/upload";
+      localStorage.setItem(
+        "token",
+        response.data.token
+      );
+
+      localStorage.setItem(
+        "name",
+        response.data.name
+      );
+
+      setError("");
+
+      window.location.href =
+        "/dashboard/upload";
+
+    } catch (err) {
+
+      console.log(err);
+
+      setError(
+        "Invalid Email or Password"
+      );
+    }
   };
 
   return (
@@ -52,21 +69,29 @@ export default function Login() {
 
       <Paper className="login-paper">
 
-        <Typography variant="h4">
-
-          {isLogin ? "Login" : "Register"}
-
+        <Typography
+          variant="h4"
+          sx={{
+            mb: 3,
+            textAlign: "center",
+            fontWeight: "bold",
+          }}
+        >
+          Login
         </Typography>
 
-        {!isLogin && (
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Name"
-            name="name"
-            onChange={handleChange}
-          />
-        )}
+        {
+          error && (
+
+            <Alert
+              severity="error"
+              sx={{ mb: 2 }}
+            >
+              {error}
+            </Alert>
+
+          )
+        }
 
         <TextField
           fullWidth
@@ -88,20 +113,11 @@ export default function Login() {
         <Button
           fullWidth
           variant="contained"
-          sx={{ mt: 2 }}
-          onClick={isLogin ? handleLogin : handleRegister}
+          sx={{ mt: 3 }}
+          onClick={handleLogin}
         >
-          {isLogin ? "Login" : "Register"}
+          Login
         </Button>
-
-        <Typography
-          sx={{ mt: 2, cursor: "pointer" }}
-          onClick={() => setIsLogin(!isLogin)}
-        >
-          {isLogin
-            ? "Create Account"
-            : "Already have account?"}
-        </Typography>
 
       </Paper>
 
